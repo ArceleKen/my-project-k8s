@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: back-admin-deployment
+  labels:
+    app.kubernetes.io/name: back-admin
+    app.kubernetes.io/component: server
+    app.kubernetes.io/part-of: auth-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: back-admin
+      app.kubernetes.io/component: server
+      app.kubernetes.io/part-of: auth-app
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: back-admin
+        app.kubernetes.io/component: server
+        app.kubernetes.io/part-of: auth-app
+    spec:
+      imagePullSecrets:
+        - name: docker-hub-secret
+      containers:
+        - name: back-admin
+          image: arceledock/myfullapp-admin:1.0.2
+          ports:
+            - containerPort: 8080
+          env:
+            - name: JWT_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: jwt-secret-key
+            - name: DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql
+                  key: postgres-password
+            - name: DATASOURCE_URL
+              value: jdbc:postgresql://postgresql-hl:5432/app_administration
+            - name: DATASOURCE_USERNAME
+              value: postgres
+            - name: EUREKA_URL
+              value: http://localhost:8001/eureka/
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+          livenessProbe:
+            httpGet:
+              path: /api/v1/administration/probes/health-check
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /api/v1/administration/probes/health-check
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
