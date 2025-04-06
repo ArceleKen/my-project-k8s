@@ -1,8 +1,10 @@
-# Se rassurer que les images des app sont dispos sur le repo
+# Deploiement d'application via Kubernetes
+
+## Se rassurer que les images des app sont dispos sur le repo
 
 Notre cas c'est l'image de notre application back-admin
 
-# Deploiement de la BD en Statefulset, en utilisant HELM (Gestionnaire de package pour K8S)
+## Deploiement de la BD en Statefulset, en utilisant HELM (Gestionnaire de package pour K8S)
 
 Notre SGBD c'est Postgresql 17
 
